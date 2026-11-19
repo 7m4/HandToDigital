@@ -1,0 +1,39 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#101827"><title>HandToDigital — دفتر رقمي</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/styles.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf-lib/1.17.1/pdf-lib.min.js"></script>
+</head>
+<body>
+<header class="topbar"><a class="brand" href="/"><span class="brand-mark">H</span><span>Hand<span class="brand-light">ToDigital</span></span></a><span class="top-note"><span class="live-dot"></span> تحويل ذكي للكتابة اليدوية</span></header>
+<main class="shell">
+<section class="hero"><div class="eyebrow">YOUR NOTES, REIMAGINED</div><h1>من الورق إلى <span>دفتر رقمي</span></h1><p>حوّل ملاحظاتك العربية المكتوبة بخط اليد إلى محتوى تعليمي منظم باللغة الإنجليزية داخل قالب دفتر موحّد.</p></section>
+<section class="workspace"><form id="convertForm" novalidate>
+<div class="section-heading"><span class="step">01</span><div><h2>إعدادات الذكاء الاصطناعي</h2><p>أدخل بيانات الاتصال بالنموذج الذي تريد استخدامه.</p></div></div>
+<div class="form-grid">
+<label class="field"><span>مزود الخدمة</span><select id="provider"><option value="gemini">Google Gemini</option><option value="openai">OpenAI</option></select></label>
+<label class="field"><span>اسم النموذج</span><input id="model" value="gemini-3.8-flash" required placeholder="مثال: gemini-2.5-flash"></label>
+<label class="field full"><span>API Key</span><div class="key-wrap"><input id="apiKey" type="password" placeholder="أدخل مفتاح API الخاص بك" autocomplete="off" required><button type="button" id="toggleKey" class="eye-btn">◉</button></div><small>لا يتم حفظ المفتاح في قاعدة بيانات أو ملفات المشروع.</small></label>
+</div>
+<div class="section-heading separated"><span class="step">02</span><div><h2>ملف المصدر</h2><p>ارفع ملف PDF يحتوي على صفحات الكتابة اليدوية.</p></div></div>
+<label class="dropzone" id="dropzone" for="pdfFile"><input id="pdfFile" type="file" accept="application/pdf,.pdf" hidden><span class="upload-icon">↑</span><strong id="fileTitle">اسحب ملف PDF إلى هنا</strong><span id="fileSub">أو اضغط لاختيار الملف من جهازك</span><span class="file-limit">PDF فقط · حتى 40 MB · حتى 60 صفحة</span></label>
+<div class="fixed-format-note"><strong>تنسيق موحّد</strong><p>سيتم إخراج جميع الصفحات باللغة الإنجليزية باستخدام قالب دفتر مسطّر مع تجليد جانبي، دون خيارات تنسيق إضافية.</p></div>
+<div class="form-grid additional-settings">
+<label class="field full"><span>تعليمات إضافية (اختياري)</span><textarea id="instructions" rows="3" placeholder="أضف أي تعليمات خاصة تريد تطبيقها على جميع الصفحات..."></textarea></label>
+<label class="field"><span>الاحتفاظ بالملف الأصلي</span><select id="retention"><option value="yes" selected>نعم، احتفظ به على جهازي</option><option value="no">لا، امسح اختياره بعد التحويل</option></select></label>
+</div>
+<div class="privacy-note"><span>◆</span><p><strong>خصوصيتك مهمة.</strong> لا نخزن ملفات PDF أو HTML أو الصور على خادم التطبيق. ملف PDF الأصلي يبقى في جهازك ولا يُرفع إلى الخادم؛ تُرسل صور الصفحات إلى مزود الذكاء الاصطناعي عبر الخادم.</p></div>
+<button id="startBtn" class="primary-btn" type="submit"><span>ابدأ تحويل الملف</span><b>←</b></button>
+</form></section>
+
+<section id="progressPanel" class="result-panel hidden"><div class="section-heading"><span class="step">03</span><div><h2>تقدم المعالجة</h2><p id="progressText">جارٍ تجهيز الملف...</p></div></div><div class="progress-track"><div id="progressBar"></div></div><div class="progress-meta"><span id="pageCounter">0 / 0 صفحة</span><span id="percent">0%</span></div><div id="pageList" class="page-list"></div><div id="resultActions" class="result-actions hidden"><div class="success-message"><span>✓</span><div><strong>اكتمل تحويل الملف</strong><small id="resultInfo">ملفك جاهز للتنزيل.</small></div></div><button id="downloadBtn" class="primary-btn" type="button"><span>تحميل ملف PDF الناتج</span><b>↓</b></button></div></section>
+<div id="instancePanel" class="instance-panel" aria-live="polite"><strong>معلومات Instance المتصل به</strong><div class="instance-grid"><span>Instance ID</span><b id="instanceId">جارٍ التحميل...</b><span>Availability Zone</span><b id="instanceAz">—</b><span>Private IP</span><b id="instanceIp">—</b></div><small id="instanceNote">يتم جلب معلومات الخادم الذي يستجيب لهذا الاتصال.</small></div>
+<div id="errorBox" class="error-box hidden" role="alert"></div>
+</main><footer><span>HandToDigital</span><span>تحويل ملاحظاتك، صفحة بعد صفحة.</span></footer><script src="/app.js"></script>
+</body></html>

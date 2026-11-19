@@ -1,0 +1,22 @@
+[Unit]
+Description=HandToDigital FastAPI application
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=handtodigital
+Group=handtodigital
+WorkingDirectory=/opt/handtodigital
+Environment=PYTHONUNBUFFERED=1
+ExecStart=/opt/handtodigital/.venv/bin/uvicorn app.main:app --host 127.0.0.1 --port 8000 --workers 2
+Restart=always
+RestartSec=5
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=full
+ProtectHome=true
+ReadWritePaths=/opt/handtodigital
+
+[Install]
+WantedBy=multi-user.target
